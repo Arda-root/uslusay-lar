@@ -1,0 +1,29 @@
+name: Debian Derleme Otomasyonu
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build-debian:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Kodu Cek
+        uses: actions/checkout@v4
+
+      - name: Python ve Debian/Tkinter Bağımlılıklarını Kur
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-tk python3-pip
+          python3 -m pip install --upgrade pip
+          pip install pyinstaller
+
+      - name: PyInstaller ile Executable Yap
+        run: |
+          pyinstaller --onefile --noconsole uslu_isaret.py
+
+      - name: Dosyayi Artifact Olarak Yükle
+        uses: actions/upload-artifact@v4
+        with:
+          name: debian-executable
+          path: dist/uslu_isaret
